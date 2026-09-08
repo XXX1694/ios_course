@@ -15,4 +15,4 @@ let whenIStatredCoding = 2015 // From 5th grade )))
 
 let summary = "Hello! My name is \(firstName) \(lastName), I am \(age) years old, born in \(birthYear). I am currently \(isStudent ? "a":"not a") student. I enjoy \(hobby), which is \(isHobbyCreative ? "a":"not a") creative hobby. I have \(numberOfHobbies) in total, and my favorite number is \(favoriteNumber)."
 
-print(summary)
+print("Summary: \(summary)")

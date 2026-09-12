@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode — per-user editor state (window layout, cursor position, breakpoints)
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+
+# Xcode build output
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM

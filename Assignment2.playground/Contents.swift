@@ -39,3 +39,27 @@ var fruits1: [String] = ["apple", "banana"]
 var fruits2: [String] = ["cherry", "date"]
 var allFruits: [String] = fruits1 + fruits2
 print(allFruits)
+
+
+// Hard tasks
+
+var population: [String: Int] = [
+    "Kazakhstan": 20000000,
+    "USA": 500000000,
+    "China": 2000000000,
+]
+population["Italy"] = 50000000
+print(population)
+
+var setA: Set<String>  = ["Cat", "Dog"];
+var setB: Set<String>  = ["Dog", "Mouse"];
+setA.formUnion(setB)
+setA.subtract(setB)
+print(setA)
+
+var studetAllGrades: [String: [Int]] = [
+    "Abzal": [90, 89, 95],
+    "Arman": [98, 76, 100],
+    "Borat": [69, 67, 70],
+]
+print(studetAllGrades["Abzal"]![1])

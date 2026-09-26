@@ -86,3 +86,34 @@ print("ALMA-7 systems online: \(rawLog.count) log lines, \(crew.count) crew memb
 // Uncomment each signature when you start working on it.
 
 
+// MARK: Level 1 · Decoding Telemetry
+
+// 1.1
+ func parseReading(_ raw: String) -> Reading? {
+     guard let (sensor, valueStr) = splitOnce(raw, by: ":"),
+               !sensor.isEmpty,
+               let value = Int(valueStr),
+               value >= 0 || sensor == "TEMP" else {
+             return nil
+         }
+     return (sensor, value)
+ }
+
+// 1.2
+ func parseLog(_ lines: [String]) -> (valid: [Reading], invalidCount: Int) {
+     var valid: [Reading] = []
+     var invalidCount = 0
+     for line in lines {
+         if let reading = parseReading(line) {
+             valid.append(reading)
+         } else {
+             invalidCount += 1
+         }
+     }
+     return (valid, invalidCount)
+ }
+
+let parsedData = parseLog(rawLog)
+let A = parsedData.invalidCount
+
+

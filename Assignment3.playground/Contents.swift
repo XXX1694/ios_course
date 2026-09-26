@@ -171,3 +171,36 @@ let sort4 = validReadings.sorted(by: { $0.value > $1.value })
 let sort5 = validReadings.sorted { $0.value > $1.value }
 
 
+// MARK: Level 3 · Temperature Stabilization
+
+// 3.1
+func heatUp(_ t: Int) -> Int { t + 5 }
+func coolDown(_ t: Int) -> Int { t - 3 }
+func hold(_ t: Int) -> Int { t }
+func chooseProtocol(for temp: Int) -> (Int) -> Int {
+    if temp < 18 { return heatUp }
+    if temp > 24 { return coolDown }
+    return hold
+}
+
+// 3.2
+func runUntilStable(from start: Int, maxSteps: Int = 10) -> (finalTemp: Int, steps: Int, isStable: Bool) {
+    var temp = start
+    var steps = 0
+    
+    while steps < maxSteps {
+        if temp >= 18 && temp <= 24 {
+            return (temp, steps, true)
+        }
+        let action = chooseProtocol(for: temp)
+        temp = action(temp)
+        steps += 1
+    }
+    return (temp, steps, temp >= 18 && temp <= 24)
+}
+
+let tempReadings = select(parsedData.valid) { $0.sensor == "TEMP" }
+let minTemp = stats(of: values(of: tempReadings))?.min ?? 0
+let C = runUntilStable(from: minTemp).steps
+
+

@@ -260,3 +260,29 @@ func evacuationOrder(_ names: String..., roster: [String: CrewMember]) -> [Strin
 }
 
 
+// MARK: Level 5 · The Saboteur's Logbook
+// The saboteur's code is below, commented out (it needs your
+// oxygenLevel(of:) to compile). Comment on every problem, then
+// write fixed versions and a test that proves the logic bug is gone.
+
+
+func reportOxygen(for member: CrewMember) -> String {
+    guard let tank = member.module?.oxygenTank else {
+        return "\(member.name): No tank available"
+    }
+    return "\(member.name): \(tank.level)%"
+}
+
+func firstCritical(in crew: [CrewMember]) -> String? {
+    for member in crew {
+        if let level = oxygenLevel(of: member), level < 20 {
+            return member.name
+        }
+    }
+    return nil
+}
+
+print(reportOxygen(for: crew[1])) // Dana (нет бака)
+print(firstCritical(in: crew) ?? "No critical levels")
+
+

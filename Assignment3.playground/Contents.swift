@@ -204,3 +204,59 @@ let minTemp = stats(of: values(of: tempReadings))?.min ?? 0
 let C = runUntilStable(from: minTemp).steps
 
 
+// MARK: Level 4 · The Crew
+
+// 4.1
+func oxygenLevel(of member: CrewMember) -> Int? {
+    member.module?.oxygenTank?.level
+}
+
+// 4.2
+func status(of member: CrewMember) -> String {
+    guard let module = member.module else {
+        return "\(member.name): no data (open space)"
+    }
+    guard let level = oxygenLevel(of: member) else {
+        return "\(member.name): no data (\(module.name))"
+    }
+    return level < 20 ? "\(member.name): \(level)% CRITICAL" : "\(member.name): \(level)% OK"
+}
+
+// 4.3
+@discardableResult
+func transferOxygen(from source: inout Int, to target: inout Int, amount: Int) -> Int {
+    guard amount > 0 else { return 0 }
+    let transfer = min(amount, source, 100 - target)
+    source -= transfer
+    target += transfer
+    return transfer
+}
+
+var labLevel = lab.oxygenTank?.level ?? 0
+var habLevel = hab.oxygenTank?.level ?? 0
+transferOxygen(from: &labLevel, to: &habLevel, amount: 30)
+lab.oxygenTank?.level = labLevel
+hab.oxygenTank?.level = habLevel
+
+let D = hab.oxygenTank?.level ?? 0
+
+// 4.4
+func evacuationOrder(_ names: String..., roster: [String: CrewMember]) -> [String] {
+    var found: [CrewMember] = []
+    for name in names {
+        guard let member = roster[name] else {
+            print("Unknown crew member: \(name)")
+            continue
+        }
+        found.append(member)
+    }
+    
+    let sorted = found.sorted { $0.priority < $1.priority }
+    var result: [String] = []
+    for member in sorted {
+        result.append(member.name)
+    }
+    return result
+}
+
+

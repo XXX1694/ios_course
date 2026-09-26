@@ -117,3 +117,57 @@ let parsedData = parseLog(rawLog)
 let A = parsedData.invalidCount
 
 
+// MARK: Level 2 · Analysis
+
+// 2.1
+func select(_ readings: [Reading], where isIncluded: (Reading) -> Bool) -> [Reading] {
+    var result: [Reading] = []
+    for reading in readings {
+        if isIncluded(reading) {
+            result.append(reading)
+        }
+    }
+    return result
+}
+
+func values(of readings: [Reading]) -> [Int] {
+    var result: [Int] = []
+    for reading in readings {
+        result.append(reading.value)
+    }
+    return result
+}
+
+// 2.2
+func stats(of values: [Int]) -> (min: Int, max: Int, average: Double)? {
+    guard !values.isEmpty else { return nil }
+    var minVal = values[0]
+    var maxVal = values[0]
+    var sum = 0
+    
+    for v in values {
+        if v < minVal { minVal = v }
+        if v > maxVal { maxVal = v }
+        sum += v
+    }
+    return (minVal, maxVal, Double(sum) / Double(values.count))
+}
+
+func stats(_ values: Int...) -> (min: Int, max: Int, average: Double)? {
+    stats(of: values)
+}
+
+let o2Readings = select(parsedData.valid) { $0.sensor == "O2" }
+let B = Int(stats(of: values(of: o2Readings))?.average ?? 0)
+
+// 2.3 · The Closure Ladder (5 sorts, then compare results in code)
+
+var validReadings = parsedData.valid
+
+let sort1 = validReadings.sorted(by: { (r1: Reading, r2: Reading) -> Bool in return r1.value > r2.value })
+let sort2 = validReadings.sorted(by: { r1, r2 in return r1.value > r2.value })
+let sort3 = validReadings.sorted(by: { r1, r2 in r1.value > r2.value })
+let sort4 = validReadings.sorted(by: { $0.value > $1.value })
+let sort5 = validReadings.sorted { $0.value > $1.value }
+
+

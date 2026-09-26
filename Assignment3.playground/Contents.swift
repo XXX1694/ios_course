@@ -286,3 +286,24 @@ print(reportOxygen(for: crew[1])) // Dana (нет бака)
 print(firstCritical(in: crew) ?? "No critical levels")
 
 
+// MARK: Finale · Launch Code
+
+let launchCode = "\(A)-\(B)-\(C)-\(D)"
+print("\nLAUNCH CODE: \(launchCode)")
+
+
+// MARK: Bonus
+
+func makeAlarm(threshold: Int) -> (Int) -> Bool {
+    var count = 0
+    return { level in
+        if level < threshold {
+            count += 1
+            print("Alarm #\(count)")
+            return true
+        }
+        return false
+    }
+}
+
+

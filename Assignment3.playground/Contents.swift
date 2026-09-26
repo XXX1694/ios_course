@@ -307,3 +307,36 @@ func makeAlarm(threshold: Int) -> (Int) -> Bool {
 }
 
 
+// MARK: - ================= DEFENSE QUESTIONS =================
+/*
+ 1. guard let vs if let beyond syntax:
+    with guard let the value stays after the check till end of function
+    and else has to exit (return or break) so code dont go deeper in brackets
+    if let value works only inside its own { }
+
+ 2. Why can't you pass [Int] to stats(_ values: Int...)?
+    Int... wants numbers one by one with commas not array
+    inside function its [Int] but from outside you cant give array
+    thats why i made stats(of:) for arrays
+
+ 3. Why doesn't transferOxygen(from: &x, to: &x, amount: 5) compile?
+    both inout point to same variable
+    swift dont let change one variable from two places at same time
+    so compiler stops it
+
+ 4. Why doesn't oxygenLevel(of: dana) ?? "no data" compile?
+    oxygenLevel returns Int? so left is Int and right is String
+    ?? needs same type on both sides
+    fix is ?? 0 or check with if let first
+
+ 5. Full type of chooseProtocol and how to read it:
+    (Int) -> (Int) -> Int
+    takes Int (temperature) and gives back function
+    that function takes Int and returns Int (heatUp, coolDown or hold)
+
+ Bonus. Where does the alarm counter live after makeAlarm returns?
+    inside the closure, closure captures count and keeps it alive
+    every call of same alarm changes same count
+    new makeAlarm call makes new count
+*/
+

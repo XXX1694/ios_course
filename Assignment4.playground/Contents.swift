@@ -107,3 +107,71 @@ print(AlarmLevel.level(forTotalMass: 940))
 print(AlarmLevel.level(forTotalMass: 4000))
 
 
+// MARK: Level 2 · The Manifest
+
+print("\n=== Level 2 ===")
+
+// 2.1
+enum ManifestEntry {
+    case crate(id: Int, massKg: Int)
+    case container(code: String, massKg: Int)
+    case livestock(species: String, count: Int, massPerUnitKg: Int)
+    case unknown(raw: String)
+}
+
+// 2.2
+func parseEntry(_ line: String) -> ManifestEntry {
+    let parts = fields(line)
+
+    switch parts[0] {
+    case "crate":
+        if parts.count == 3, let id = Int(parts[1]), let massKg = Int(parts[2]) {
+            return .crate(id: id, massKg: massKg)
+        }
+    case "container":
+        if parts.count == 3, let massKg = Int(parts[2]) {
+            return .container(code: parts[1], massKg: massKg)
+        }
+    case "livestock":
+        if parts.count == 4, let count = Int(parts[2]), let perUnit = Int(parts[3]) {
+            return .livestock(species: parts[1], count: count, massPerUnitKg: perUnit)
+        }
+    default:
+        break
+    }
+
+    return .unknown(raw: line)
+}
+
+// 2.3
+func mass(of entry: ManifestEntry) -> Int {
+    switch entry {
+    case .crate(_, let massKg):
+        return massKg
+    case .container(_, let massKg):
+        return massKg
+    case .livestock(_, let count, let massPerUnitKg):
+        return count * massPerUnitKg
+    case .unknown:
+        return 0
+    }
+}
+
+var totalMass = 0
+var unknownCount = 0
+
+for line in rawManifest {
+    let entry = parseEntry(line)
+    print(entry, "->", mass(of: entry), "kg")
+    totalMass += mass(of: entry)
+    if case .unknown = entry {
+        unknownCount += 1
+    }
+}
+
+print("Total mass: \(totalMass) kg")
+print("Unknown lines: \(unknownCount)")
+
+let A = totalMass
+
+

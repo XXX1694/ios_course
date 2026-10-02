@@ -493,3 +493,72 @@ do {
 }
 
 
+// MARK: Level 7 · Sealing the Black Box
+
+print("\n=== Level 7 ===")
+
+final class FlightRecorder {
+    // private: nobody outside can replace or clear the entries
+    private var entries: [String] = []
+
+    // private(set): outside can read isSealed but can't set it back to false
+    private(set) var isSealed = false
+
+    // internal: read-only count, can't be used to change anything
+    internal var entryCount: Int {
+        entries.count
+    }
+
+    // internal: read-only transcript, gives text, not the array
+    internal var transcript: String {
+        var text = ""
+        for (index, entry) in entries.enumerated() {
+            text += "\(index + 1). \(entry)\n"
+        }
+        return text
+    }
+
+    // internal: the only way to add, blocks adding after seal
+    internal func add(_ entry: String) -> Bool {
+        if isSealed {
+            return false
+        }
+        entries.append(entry)
+        return true
+    }
+
+    // internal: can only seal, there is no unseal
+    internal func seal() {
+        isSealed = true
+    }
+
+    // fileprivate: blocks code outside this file from reading raw entries
+    fileprivate func rawEntries() -> [String] {
+        entries
+    }
+}
+
+func auditTranscript(of recorder: FlightRecorder) -> String {
+    var lengths = 0
+    for entry in recorder.rawEntries() {
+        lengths += entry.count
+    }
+    return "Audit: \(recorder.entryCount) entries, \(lengths) characters, sealed: \(recorder.isSealed)"
+}
+
+let recorder = FlightRecorder()
+print(recorder.add("Teleporter online"))
+print(recorder.add("Crew transfer reported"))
+recorder.seal()
+print(recorder.add("Rewrite history"))
+print("Entries: \(recorder.entryCount)")
+print(recorder.transcript)
+print(auditTranscript(of: recorder))
+
+// Trying to break it:
+// recorder.entries = []
+// error: 'entries' is inaccessible due to 'private' protection level
+// recorder.isSealed = false
+// error: cannot assign to property: 'isSealed' setter is inaccessible
+
+

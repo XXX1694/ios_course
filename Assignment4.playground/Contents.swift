@@ -609,3 +609,40 @@ print(describe(record1, record3))
 // it has no identity, every variable has own copy so === cant be used
 
 
+// MARK: - ================= DEFENSE QUESTIONS =================
+/*
+ 1. Why did CrewSnapshot get an initializer for free and TeleportPod did not?
+    structs get init with all properties for free, classes dont because of
+    inheritance. swift wants you to write init so every property is set
+    on purpose (also for subclasses)
+
+ 2. What does `mutating` do to self, and why do classes never need it?
+    in mutating method self becomes inout so method can change
+    properties or even replace self. class method works through
+    reference, object can always change so no need for mutating
+
+ 3. In Report 4 both values are `let`. What exactly does `let` freeze for a
+    struct, and what does it freeze for a class?
+    struct: whole value, cant change any property
+    class: only reference, cant point it to other object but
+    var properties of object still can change
+
+ 4. Why must a lazy property be var? When does lazy change behaviour, not
+    just performance?
+    value is set after init on first use, and let must be set in init
+    behaviour changes when it does something extra - fullDiagnostics
+    prints "Running full scan..." only on first use and never if nobody
+    touches it. also value is taken at moment of first use not at init
+
+ 5. private vs fileprivate: where in your FlightRecorder would private be
+    too strict?
+    auditTranscript is free function outside the class, it needs raw
+    entries so rawEntries() is fileprivate. with private it wouldnt
+    compile there
+
+ Bonus. On which line does deinit fire, and why can't === be used on
+ CrewSnapshot?
+    on survivor = nil, last reference goes away there. leaving the
+    do block removes only tempPod. === compares references and struct is
+    value without identity
+*/

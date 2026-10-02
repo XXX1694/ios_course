@@ -562,3 +562,50 @@ print(auditTranscript(of: recorder))
 // error: cannot assign to property: 'isSealed' setter is inaccessible
 
 
+// MARK: Finale · Integrity Code
+
+print("\n=== Finale ===")
+
+let D = AlarmLevel.level(forTotalMass: A).rawValue
+let integrityCode = "\(A)-\(B)-\(C)-\(D)"
+print("INTEGRITY CODE: \(integrityCode)")
+
+
+// MARK: Bonus
+
+print("\n=== Bonus ===")
+
+var survivor: TeleportPod?
+
+do {
+    let tempPod = TeleportPod(id: "TEMP", chargeLevel: 10)
+    survivor = tempPod
+    print("Inside do block")
+}
+print("Left do block - no deinit, survivor still holds the pod")
+survivor = nil
+print("survivor = nil - deinit fired on the line above")
+
+// after the block only tempPod is gone, survivor still holds it so count is 1
+// deinit fires when last reference goes away: survivor = nil
+
+func describe(_ first: TeleportPod, _ second: TeleportPod) -> String {
+    if first === second {
+        return "same pod"
+    }
+    if first.id == second.id && first.chargeLevel == second.chargeLevel {
+        return "two pods with equal contents"
+    }
+    return "different pods"
+}
+
+let record1 = TeleportPod(id: "X", chargeLevel: 60)
+let record2 = record1
+let record3 = TeleportPod(id: "X", chargeLevel: 60)
+print(describe(record1, record2))
+print(describe(record1, record3))
+
+// === checks if two references is same object. CrewSnapshot is struct
+// it has no identity, every variable has own copy so === cant be used
+
+

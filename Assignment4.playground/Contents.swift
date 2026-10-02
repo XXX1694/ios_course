@@ -175,3 +175,80 @@ print("Unknown lines: \(unknownCount)")
 let A = totalMass
 
 
+// MARK: Level 3 · Crew Snapshots
+
+print("\n=== Level 3 ===")
+
+// 3.1
+struct CrewSnapshot {
+    let name: String
+    var deck: Deck
+    var oxygen: Int
+
+    mutating func breathe(_ amount: Int) {
+        oxygen = max(oxygen - amount, 0)
+    }
+
+    mutating func move(to deck: Deck) {
+        self.deck = deck
+    }
+
+    mutating func reviveInMedbay() {
+        self = CrewSnapshot(name: name, deck: .medbay, oxygen: 100)
+    }
+
+    static func rookie(named name: String) -> CrewSnapshot {
+        CrewSnapshot(name: name, deck: .bridge, oxygen: 100)
+    }
+}
+
+var rookie = CrewSnapshot.rookie(named: "Arman")
+print("Rookie: \(rookie)")
+rookie.breathe(130)
+rookie.move(to: .cargo)
+print("After breathe and move: \(rookie)")
+rookie.reviveInMedbay()
+print("After revive: \(rookie)")
+
+// 3.2
+var crewRoster: [CrewSnapshot] = []
+
+for record in crewData {
+    if let deck = Deck(rawValue: record.deck) {
+        crewRoster.append(CrewSnapshot(name: record.name, deck: deck, oxygen: record.oxygen))
+    } else {
+        print("Warning: \(record.name) is on unknown deck \"\(record.deck)\", skipped")
+    }
+}
+
+for member in crewRoster {
+    print("\(member.name) - \(member.deck.rawValue) - oxygen \(member.oxygen)")
+}
+
+// 3.3
+func drainPlain(_ crew: CrewSnapshot) {
+    var crew = crew
+    crew.breathe(50)
+    print("   inside plain function: \(crew.oxygen)")
+}
+
+func drainInout(_ crew: inout CrewSnapshot) {
+    crew.breathe(50)
+}
+
+var original = CrewSnapshot(name: "Aigerim", deck: .bridge, oxygen: 91)
+
+var copy = original
+print("1. Copy - before: original \(original.oxygen), copy \(copy.oxygen)")
+copy.breathe(30)
+print("1. Copy - after:  original \(original.oxygen), copy \(copy.oxygen)")
+
+print("2. Plain - before: original \(original.oxygen)")
+drainPlain(original)
+print("2. Plain - after:  original \(original.oxygen)")
+
+print("3. Inout - before: original \(original.oxygen)")
+drainInout(&original)
+print("3. Inout - after:  original \(original.oxygen)")
+
+

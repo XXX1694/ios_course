@@ -322,3 +322,88 @@ print("Crew: crew1 \(crew1.oxygen), crew2 \(crew2.oxygen)")
 // class gives same object to both names, struct gives each one its own copy
 
 
+// MARK: Level 5 · Station Systems
+
+print("\n=== Level 5 ===")
+
+// 5.1
+final class Station {
+    let callSign: String
+    var oxygenByDeck: [Deck: Int] = [:]
+
+    var hullIntegrity: Int {
+        willSet {
+            print("Hull: \(hullIntegrity) -> \(newValue)")
+        }
+        didSet {
+            hullIntegrity = min(max(hullIntegrity, 0), 100)
+        }
+    }
+
+    lazy var fullDiagnostics: String = {
+        print("Running full scan...")
+        return "\(callSign): hull \(hullIntegrity), total oxygen \(totalOxygen)"
+    }()
+
+    var totalOxygen: Int {
+        var sum = 0
+        for value in oxygenByDeck.values {
+            sum += value
+        }
+        return sum
+    }
+
+    var averageOxygen: Int {
+        get {
+            if oxygenByDeck.isEmpty {
+                return 0
+            }
+            return totalOxygen / oxygenByDeck.count
+        }
+        set {
+            for deck in oxygenByDeck.keys {
+                oxygenByDeck[deck] = newValue
+            }
+        }
+    }
+
+    init(callSign: String, hullIntegrity: Int) {
+        self.callSign = callSign
+        self.hullIntegrity = hullIntegrity
+        for reading in deckReadings {
+            if let deck = Deck(rawValue: reading.deck) {
+                oxygenByDeck[deck] = reading.oxygen
+            }
+        }
+    }
+}
+
+let station = Station(callSign: "ALMA-7", hullIntegrity: 100)
+let B = station.averageOxygen
+
+print("Total oxygen: \(station.totalOxygen)")
+print("Average oxygen: \(station.averageOxygen)")
+
+print("Before first diagnostics access")
+print(station.fullDiagnostics)
+print("Second access:")
+print(station.fullDiagnostics)
+
+let backupStation = Station(callSign: "ALMA-8", hullIntegrity: 80)
+print("\(backupStation.callSign) created, diagnostics never touched - no scan printed")
+
+station.averageOxygen = 70
+print("After setting average to 70: total \(station.totalOxygen), average \(station.averageOxygen)")
+
+// 5.2
+station.hullIntegrity = 130
+print("Hull: \(station.hullIntegrity)")
+station.hullIntegrity = -40
+print("Hull: \(station.hullIntegrity)")
+station.hullIntegrity = 55
+print("Hull: \(station.hullIntegrity)")
+
+// setting property inside its own didSet doesnt call didSet again
+// so clamp works one time and stops
+
+

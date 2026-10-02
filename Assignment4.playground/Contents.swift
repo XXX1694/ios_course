@@ -66,3 +66,44 @@ print("ALMA-7 recorder online: \(rawManifest.count) manifest lines, \(deckReadin
 // MARK: - =================== YOUR SOLUTION ===================
 
 
+// MARK: Level 1 · The Deck Register
+
+print("\n=== Level 1 ===")
+
+// 1.1
+enum Deck: String, CaseIterable {
+    case bridge, lab, cargo, medbay, engine
+
+    var evacuationPriority: Int {
+        switch self {
+        case .bridge: return 1
+        case .medbay: return 2
+        case .lab: return 3
+        case .engine: return 4
+        case .cargo: return 5
+        }
+    }
+}
+
+for deck in Deck.allCases {
+    print("\(deck.rawValue): priority \(deck.evacuationPriority)")
+}
+
+// 1.2
+enum AlarmLevel: Int {
+    case green = 0
+    case yellow
+    case orange
+    case red
+
+    static func level(forTotalMass mass: Int) -> AlarmLevel {
+        let step = min(max(mass / 500, 0), 3)
+        return AlarmLevel(rawValue: step) ?? .red
+    }
+}
+
+print(AlarmLevel.level(forTotalMass: 0))
+print(AlarmLevel.level(forTotalMass: 940))
+print(AlarmLevel.level(forTotalMass: 4000))
+
+

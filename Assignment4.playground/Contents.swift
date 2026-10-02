@@ -407,3 +407,89 @@ print("Hull: \(station.hullIntegrity)")
 // so clamp works one time and stops
 
 
+// MARK: Level 6 · Incident Reports
+
+print("\n=== Level 6 ===")
+
+/*
+// Report 1
+var roster = crewRoster
+for var member in roster {
+    member.oxygen -= 10
+}
+print(roster[0].oxygen)   // author expected the crew to have lost oxygen
+
+// Report 2
+let podA = TeleportPod(id: "A", chargeLevel: 100)
+let podB = podA
+podB.chargeLevel = 0
+print(podA.chargeLevel)   // author expected 100
+
+// Report 3
+struct Logbook {
+    var entries: [String] = []
+    func add(_ entry: String) {
+        entries.append(entry)
+    }
+}
+
+// Report 4
+let snapshot = CrewSnapshot.rookie(named: "Dana")
+snapshot.oxygen = 40
+
+let pod = TeleportPod(id: "B", chargeLevel: 50)
+pod.chargeLevel = 10
+*/
+
+// Report 1
+// Expected: every crew member loses 10 oxygen, Actual: roster dont change
+// Rule: for var member gives copy of each struct, the copy changes not the array
+do {
+    var roster = crewRoster
+    for i in roster.indices {
+        roster[i].oxygen -= 10
+    }
+    print("Report 1 fixed: \(roster[0].oxygen)")
+}
+
+// Report 2
+// Expected: podA keeps 100, Actual: prints 0
+// Rule: class is reference type so podA and podB is same object
+do {
+    let podA = TeleportPod(id: "A", chargeLevel: 100)
+    let podB = TeleportPod(id: "A-copy", chargeLevel: podA.chargeLevel)
+    podB.chargeLevel = 0
+    print("Report 2 fixed: \(podA.chargeLevel)")
+}
+
+// Report 3
+// Expected: add() adds entry, Actual: dont compile
+// "cannot use mutating member on immutable value: 'self' is immutable"
+// Rule: struct methods cant change properties without mutating
+struct Logbook {
+    var entries: [String] = []
+    mutating func add(_ entry: String) {
+        entries.append(entry)
+    }
+}
+
+var logbook = Logbook()
+logbook.add("Day ten: teleporter incident")
+print("Report 3 fixed: \(logbook.entries)")
+
+// Report 4
+// Expected: both work, Actual: snapshot.oxygen = 40 dont compile
+// but pod.chargeLevel = 10 works
+// Rule: let on struct freezes whole value with all properties
+// let on class freezes only reference, the object itself still can change
+do {
+    var snapshot = CrewSnapshot.rookie(named: "Dana")
+    snapshot.oxygen = 40
+    print("Report 4 fixed: \(snapshot.oxygen)")
+
+    let pod = TeleportPod(id: "B", chargeLevel: 50)
+    pod.chargeLevel = 10
+    print("Report 4 pod: \(pod.chargeLevel)")
+}
+
+

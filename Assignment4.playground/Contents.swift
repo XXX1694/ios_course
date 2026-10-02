@@ -252,3 +252,73 @@ drainInout(&original)
 print("3. Inout - after:  original \(original.oxygen)")
 
 
+// MARK: Level 4 · The Teleport Pod
+
+print("\n=== Level 4 ===")
+
+// 4.1
+final class TeleportPod {
+    let id: String
+    var chargeLevel: Int
+    var occupant: CrewSnapshot?
+
+    // Structs get a memberwise init for free. Classes don't, because a class
+    // can be inherited and Swift wants the author to decide how it is initialized.
+    init(id: String, chargeLevel: Int) {
+        self.id = id
+        self.chargeLevel = chargeLevel
+        self.occupant = nil
+    }
+
+    deinit {
+        print("Pod \(id) deinit")
+    }
+
+    func load(_ crew: CrewSnapshot) -> Bool {
+        if occupant != nil || chargeLevel < 20 {
+            return false
+        }
+        occupant = crew
+        return true
+    }
+
+    func fire() -> CrewSnapshot? {
+        guard let crew = occupant else {
+            return nil
+        }
+        chargeLevel -= 20
+        occupant = nil
+        return crew
+    }
+}
+
+// 4.2
+let pod1 = TeleportPod(id: "P-1", chargeLevel: 100)
+
+for name in ["Timur", "Dana", "Nurlan"] {
+    for member in crewRoster where member.name == name {
+        let loaded = pod1.load(member)
+        let arrived = pod1.fire()
+        print("Load \(name): \(loaded), fired: \(arrived?.name ?? "nobody"), charge: \(pod1.chargeLevel)")
+    }
+}
+
+let emptyFire = pod1.fire()
+print("Empty fire: \(emptyFire?.name ?? "nobody"), charge: \(pod1.chargeLevel)")
+
+let C = pod1.chargeLevel
+
+// 4.3
+let podRef1 = TeleportPod(id: "R-1", chargeLevel: 100)
+let podRef2 = podRef1
+podRef2.chargeLevel = 30
+print("Pod: podRef1 \(podRef1.chargeLevel), podRef2 \(podRef2.chargeLevel)")
+
+var crew1 = CrewSnapshot.rookie(named: "Dana")
+var crew2 = crew1
+crew2.oxygen = 30
+print("Crew: crew1 \(crew1.oxygen), crew2 \(crew2.oxygen)")
+
+// class gives same object to both names, struct gives each one its own copy
+
+

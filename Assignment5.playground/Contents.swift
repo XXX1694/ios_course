@@ -259,3 +259,51 @@ for sensor in sensors {
 print(diagnosticsReport(components))
 
 
+// MARK: Level 5 · Shared Behaviour
+
+extension Diagnosable {
+    func diagnose() -> String {
+        "\(componentID): code \(statusCode)"
+    }
+
+    func healthCode(for level: Int) -> Int {
+        if level < 20 {
+            return 2
+        }
+        if level < 50 {
+            return 1
+        }
+        return 0
+    }
+}
+
+extension LegacyBeacon: Diagnosable {
+    var componentID: String { name }
+
+    var statusCode: Int { healthCode(for: signalStrength) }
+
+    func diagnose() -> String {
+        "[LEGACY] beacon \(name), signal \(signalStrength), code \(statusCode)"
+    }
+}
+
+components.append(beacon)
+print(diagnosticsReport(components))
+
+var D = 0
+for component in components {
+    D += component.statusCode
+}
+
+extension Int {
+    var powerBar: String {
+        let filled = Swift.min(Swift.max(self / 10, 0), 10)
+        var bar = ""
+        for i in 0..<10 {
+            bar += i < filled ? "#" : "."
+        }
+        return bar
+    }
+}
+
+

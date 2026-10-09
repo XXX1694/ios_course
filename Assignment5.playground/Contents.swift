@@ -453,3 +453,26 @@ print("Bonus fleet work: \(bonusWork)")
 // one battery that changes, and with classes everyone sees same object not a copy
 
 
+// MARK: - ================= DEFENSE QUESTIONS =================
+/*
+ 1. Why does a class satisfy a `mutating` protocol requirement without the
+    keyword, while a struct must write it?
+    class is passed by reference so methods can always change the object
+    struct is value, to change itself inside method it must say mutating
+
+ 2. One thing inheritance does that protocols cannot, and one thing
+    protocols do that inheritance cannot:
+    Inheritance - subclass gets parents properties and init and can call super
+    Protocols - one protocol can join classes, structs and even types you cant edit
+
+ 3. What does `final` prevent, and what did it protect in runOnce()?
+    final stops class from being inherited or method from being overridden
+    In runOnce() it guarantees every drone spends power before working
+    so nobody can skip the battery check
+
+ 4. In Report 4, why did the protocol extension's method win?
+    label() wasn't in the protocol, only in the extension.
+    The array is [Labelled] so Swift only looks at the protocol type and calls the
+    extension version. Adding label() to the protocol makes it check the
+    real type and call the structs method
+*/

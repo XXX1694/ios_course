@@ -196,3 +196,66 @@ for drone in fleet {
 print("Drones ready for one more task: \(C)")
 
 
+// MARK: Level 4 · Diagnostics
+
+protocol Diagnosable {
+    var componentID: String { get }
+    var statusCode: Int { get }
+    func diagnose() -> String
+}
+
+protocol Rechargeable {
+    mutating func recharge(by amount: Int)
+}
+
+// Drone is class, its methods can always change the object so mutating not needed
+extension Drone: Diagnosable, Rechargeable {
+    var componentID: String { id }
+
+    var statusCode: Int { healthCode(for: cell.level()) }
+
+    func recharge(by amount: Int) {
+        cell.recharge(by: amount)
+    }
+}
+
+struct SensorModule: Diagnosable, Rechargeable {
+    let id: String
+    var chargeLevel: Int
+
+    var componentID: String { id }
+
+    var statusCode: Int { healthCode(for: chargeLevel) }
+
+    mutating func recharge(by amount: Int) {
+        if amount <= 0 {
+            return
+        }
+        chargeLevel = min(chargeLevel + amount, 100)
+    }
+}
+
+var sensors: [SensorModule] = []
+for record in sensorData {
+    sensors.append(SensorModule(id: record.id, chargeLevel: record.charge))
+}
+
+// [Drone] holds only Drone and subclasses, SensorModule is struct and cant inherit from Drone
+func diagnosticsReport(_ components: [Diagnosable]) -> String {
+    var report = "=== DIAGNOSTICS ==="
+    for component in components {
+        report += "\n" + component.diagnose()
+    }
+    return report
+}
+
+var components: [Diagnosable] = []
+for drone in fleet {
+    components.append(drone)
+}
+for sensor in sensors {
+    components.append(sensor)
+}
+print(diagnosticsReport(components))
+
+

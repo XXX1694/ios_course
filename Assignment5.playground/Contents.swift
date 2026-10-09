@@ -307,3 +307,96 @@ extension Int {
 }
 
 
+// MARK: Level 6 · Incident Reports
+
+/*
+// Report 1
+class PatchDrone: Drone {
+    func performTask() -> Int {
+        return 30
+    }
+}
+
+// Report 2
+final class HeavyWelder: WelderDrone {
+    override func runOnce() -> Int {
+        return 999
+    }
+}
+
+// Report 3
+let reportFleet: [Drone] = [WelderDrone(id: "W-9", cell: PowerCell(charge: 100))]
+let first = reportFleet[0]
+print(first.weldSeam())
+
+// Report 4
+protocol Labelled {
+    var componentID: String { get }
+}
+
+extension Labelled {
+    func label() -> String { "generic component" }
+}
+
+struct Thruster: Labelled {
+    let componentID: String
+    func label() -> String { "thruster \(componentID)" }
+}
+
+let parts: [Labelled] = [Thruster(componentID: "T-1")]
+print(parts[0].label())
+*/
+
+/*
+ Report 1
+ Expected: PatchDrone makes 30 work units
+ Actual: dont compile - "overriding declaration requires an 'override' keyword"
+ Rule: if subclass replaces parent method it must write override
+ Fix: override func performTask() -> Int { 30 }
+
+ Report 2
+ Expected: HeavyWelder returns 999 every shift
+ Actual: dont compile - WelderDrone is final so nobody can inherit from it
+ and runOnce() is final so nobody can override it
+ Rule: final blocks subclassing and overriding
+ Fix: inherit from Drone and override powerCost and performTask() not runOnce()
+
+ Report 3
+ Expected: prints welder message
+ Actual: dont compile - "value of type 'Drone' has no member 'weldSeam'"
+ Rule: compiler knows only the type in array (Drone), not the real object
+ Fix: check at runtime with as? (code below)
+ as? returns optional because object may be not WelderDrone, then you get nil
+
+ Report 4
+ Expected: "thruster T-1"
+ Actual: compiles but prints "generic component"
+ Rule: label() is not in protocol, its only in extension. for
+ value of type Labelled swift picks extension version not the structs one
+ Fix: add one line to protocol: func label() -> String
+*/
+
+let reportFleet: [Drone] = [WelderDrone(id: "W-9", cell: PowerCell(charge: 100))]
+let first = reportFleet[0]
+if let welder = first as? WelderDrone {
+    print(welder.weldSeam())
+}
+
+protocol Labelled {
+    var componentID: String { get }
+    func label() -> String
+}
+
+extension Labelled {
+    func label() -> String { "generic component" }
+}
+
+struct Thruster: Labelled {
+    let componentID: String
+    func label() -> String { "thruster \(componentID)" }
+}
+
+let parts: [Labelled] = [Thruster(componentID: "T-1")]
+print(parts[0].label())
+
+

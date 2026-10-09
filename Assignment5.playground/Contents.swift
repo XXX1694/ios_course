@@ -88,3 +88,85 @@ let cell = PowerCell(charge: 50)
 // error: 'charge' is inaccessible due to 'private' protection level
 
 
+// MARK: Level 2 · The Fleet
+
+// final means no subclass can change runOnce() so every drone pays power before working
+class Drone {
+    let id: String
+    let cell: PowerCell
+
+    init(id: String, cell: PowerCell) {
+        self.id = id
+        self.cell = cell
+    }
+
+    var powerCost: Int { 10 }
+
+    var statusLine: String {
+        "\(id): \(cell.level())% \(cell.level().powerBar)"
+    }
+
+    var canWork: Bool {
+        cell.level() >= powerCost
+    }
+
+    func performTask() -> Int { 0 }
+
+    final func runOnce() -> Int {
+        guard cell.spend(powerCost) else {
+            return 0
+        }
+        return performTask()
+    }
+}
+
+final class WelderDrone: Drone {
+    override var powerCost: Int { 25 }
+
+    override func performTask() -> Int { 40 }
+
+    func weldSeam() -> String {
+        "\(id) welded a seam"
+    }
+}
+
+class ScannerDrone: Drone {
+    override var powerCost: Int { 10 }
+
+    override var statusLine: String {
+        super.statusLine + " [scanner]"
+    }
+
+    override func performTask() -> Int { 15 }
+}
+
+final class CargoDrone: Drone {
+    override var powerCost: Int { 20 }
+
+    override func performTask() -> Int { 25 }
+}
+
+func makeDrone(kind: String, id: String, charge: Int) -> Drone? {
+    let cell = PowerCell(charge: charge)
+    switch kind {
+    case "welder":
+        return WelderDrone(id: id, cell: cell)
+    case "scanner":
+        return ScannerDrone(id: id, cell: cell)
+    case "cargo":
+        return CargoDrone(id: id, cell: cell)
+    default:
+        return nil
+    }
+}
+
+var fleet: [Drone] = []
+for record in fleetData {
+    if let drone = makeDrone(kind: record.kind, id: record.id, charge: record.charge) {
+        fleet.append(drone)
+    } else {
+        print("Warning: unknown drone kind '\(record.kind)' for \(record.id), skipped")
+    }
+}
+
+

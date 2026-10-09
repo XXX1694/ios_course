@@ -48,3 +48,43 @@ let beacon = LegacyBeacon(name: "ALMA-BEACON", signalStrength: 8)
 print("Fleet registry online: \(fleetData.count) drone records, \(sensorData.count) sensors, beacon \(beacon.name).")
 
 // MARK: - ================= END OF STARTER DATA =================
+
+
+// MARK: - =================== YOUR SOLUTION ===================
+
+
+// MARK: Level 1 · The Power Cell
+
+// class because drone and everyone who checks it must see same battery not a copy
+final class PowerCell {
+    private var charge: Int
+
+    init(charge: Int) {
+        self.charge = min(max(charge, 0), 100)
+    }
+
+    func level() -> Int {
+        charge
+    }
+
+    func spend(_ amount: Int) -> Bool {
+        if amount <= 0 || amount > charge {
+            return false
+        }
+        charge -= amount
+        return true
+    }
+
+    func recharge(by amount: Int) {
+        if amount <= 0 {
+            return
+        }
+        charge = min(charge + amount, 100)
+    }
+}
+
+let cell = PowerCell(charge: 50)
+// cell.charge = 100
+// error: 'charge' is inaccessible due to 'private' protection level
+
+

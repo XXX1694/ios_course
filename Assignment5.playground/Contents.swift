@@ -170,3 +170,29 @@ for record in fleetData {
 }
 
 
+// MARK: Level 3 · The Shift
+
+func runShift(_ fleet: [Drone], rounds: Int) -> Int {
+    var total = 0
+    for _ in 0..<rounds {
+        for drone in fleet {
+            total += drone.runOnce()
+        }
+    }
+    return total
+}
+
+let A = runShift(fleet, rounds: 3)
+
+var B = 0
+var C = 0
+for drone in fleet {
+    print(drone.statusLine)
+    B += drone.cell.level()
+    if drone.canWork {
+        C += 1
+    }
+}
+print("Drones ready for one more task: \(C)")
+
+

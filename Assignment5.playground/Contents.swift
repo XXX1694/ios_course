@@ -400,3 +400,56 @@ let parts: [Labelled] = [Thruster(componentID: "T-1")]
 print(parts[0].label())
 
 
+// MARK: Finale · Mission Code
+
+let missionCode = "\(A)-\(B)-\(C)-\(D)"
+print("MISSION CODE: \(missionCode)")
+
+
+// MARK: Bonus
+
+// runtime: base method crashes if subclass forgot to override it
+class RuntimeBaseDrone {
+    func performTask() -> Int {
+        fatalError("RuntimeBaseDrone must not be used directly, override performTask()")
+    }
+}
+
+// compile time: protocol cant be created with () and every type must write performTask()
+protocol FleetUnit {
+    var id: String { get }
+    var cell: PowerCell { get }
+    var powerCost: Int { get }
+    func performTask() -> Int
+}
+
+extension FleetUnit {
+    func runOnce() -> Int {
+        guard cell.spend(powerCost) else {
+            return 0
+        }
+        return performTask()
+    }
+}
+
+struct BonusWelderDrone: FleetUnit {
+    let id: String
+    let cell: PowerCell
+    let powerCost = 25
+
+    func performTask() -> Int { 40 }
+}
+
+let bonusFleet: [FleetUnit] = [BonusWelderDrone(id: "BW-1", cell: PowerCell(charge: 60))]
+var bonusWork = 0
+for unit in bonusFleet {
+    bonusWork += unit.runOnce()
+}
+print("Bonus fleet work: \(bonusWork)")
+
+// class version shares code and properties through parent and can lock
+// runOnce() with final. protocol version cant be used "bare" and works for structs too
+// but anyone can write own runOnce(). for this station id keep class - drones share
+// one battery that changes, and with classes everyone sees same object not a copy
+
+
